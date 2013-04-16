@@ -12,7 +12,7 @@ from Bio import SeqIO
 """Open the HA sequence CSV file as a list of dictionaries."""
 ha_sequences = []
 
-with open ('ha-sequences-sample.csv', 'rU') as f:
+with open ('sequences-sample.csv', 'rU') as f:
 	sequences = csv.DictReader(f)
 	
 	for row in sequences:
@@ -21,7 +21,7 @@ with open ('ha-sequences-sample.csv', 'rU') as f:
 """Parse ha_sequences (list of dictionaries) to create DNA Seq objects for each row, and add them to a SeqRecord object."""
 
 
-with open('ha-sequences-sample.fasta', 'w') as g:
+with open('sequences.fasta', 'w') as g:
 	for row in ha_sequences:
 # 		print row
 	# 	seq = row['sequence']
