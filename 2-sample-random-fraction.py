@@ -11,12 +11,12 @@ with open('sequences.csv', 'rU') as f:
 	
 	random.shuffle(records_list) #just coz I can lol
 	
-	"""Extract 500 records max."""
+	"""Extract 200 records max."""
+	max_records = 200
+	if len(records_list) >= max_records:
+		num_samples = max_records
 	
-	if len(records_list) >= 500:
-		num_samples = 500
-	
-	if len(records_list) < 500:
+	if len(records_list) < max_records:
 		num_samples = len(records_list)
 	
 	sample = random.sample(records_list, num_samples)

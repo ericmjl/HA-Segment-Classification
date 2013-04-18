@@ -12,7 +12,7 @@ import csv
         'translation':record.seq.translate()"""
         
         
-segment = 'PB1-F2'
+segment = 'HA'
 filename_sequences = 'Influenza A Human Strains %s Protein Sequences.gb' % segment
 filename_table_txt = 'Influenza A Human Strains %s Protein Sequences.txt' % segment
 filename_table_csv = 'Influenza A Human Strains %s Protein Sequences.csv' %segment
