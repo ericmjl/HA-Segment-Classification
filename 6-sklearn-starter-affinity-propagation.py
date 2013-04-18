@@ -64,7 +64,7 @@ for i, label in enumerate(labels):
 	
 print "Clusters:"
 #Write clusters to a text file for storage.
-with open('sequence-clusters.txt', 'w+') as f:
+with open('%s-sequence-clusters.txt' % segment, 'w+') as f:
 	for k, v in clusternames.items():
 		f.write(str(k))
 		f.write('\n')

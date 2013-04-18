@@ -1,0 +1,3 @@
+class FilenameHolder(object):
+	def__init__(self):
+		
