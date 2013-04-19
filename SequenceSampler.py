@@ -7,44 +7,73 @@ from FilenameHolder import *
 class SequenceSampler(object):
 	
 	"""Initialize the object."""
-	def __init__(self, fnh):
+	def __init__(self, filename_holder):
 		self.num_samples = ''
 		self.records_list = []
-	
-	def read_sequences(self, file):
-	
-	def extract_subset(self, num_samples):
-		self.num_samples = num_samples
+		self.subset = []
 		
+		self.fieldnames = []
 		
+		self.fnh = filename_holder
+	
+	"""Open the file of sequences and read them into memory."""
+	def fetch_sequences(self):
+		in_file = open(self.fnh.get_fn_compiled(), 'rU')
 		
+		records = csv.DictReader(in_file)
 		
+		for n, row in enumerate(records):
+			if n == 0:
+				self.fieldnames = row.keys()
+			self.records_list.append(row)
 		
+		in_file.close()
 		
+	"""Get records_list."""
+	def get_records_list(self):
+		return self.records_list
 		
-with open('sequences.csv', 'rU') as f:
-	records = csv.DictReader(f)
+	"""Generate records_list."""
+	def generate_records_list(self):
+		for row in self.records_list:
+			yield row
 	
-	for row in records:
-		records_list.append(row)
+	"""Shuffle the records. Just coz we can."""
+	def shuffle_records(self):
+		random.shuffle(self.records_list)
+		
+	"""Extract a subset of n or less records."""
+	def extract_subset(self, n):		
+		if len(self.records_list) >= n:
+			self.num_samples = n
+			
+		elif len(self.records_list) < n:
+			self.num_samples = len(self.records_list)
+		
+		self.subset = random.sample(self.records_list, self.num_samples)
 	
-	random.shuffle(records_list) #just coz I can lol
+	"""Get the entire subset list."""
+	def get_subset(self):
+		return self.subset
 	
-	"""Extract 200 records max."""
-	max_records = 200
-	if len(records_list) >= max_records:
-		num_samples = max_records
+	"""Write the entire subset list to a CSV file."""
+	def write_subset(self):
+		out_file = open(self.fnh.get_fn_subset(), 'w+')
+		
+		csvwriter = csv.DictWriter(out_file, delimiter = ',', fieldnames = self.fieldnames)
+		csvwriter.writerow(dict((fn,fn) for fn in self.fieldnames))
+		for row in self.subset:
+			csvwriter.writerow(row)
+		
+		out_file.close()
 	
-	if len(records_list) < max_records:
-		num_samples = len(records_list)
-	
-	sample = random.sample(records_list, num_samples)
-	
-	
-with open('sequences-sample.csv', 'w') as g:
-	fieldnames = ['id', 'subtype', 'accession', 'strain_name', 'sequence']
-	
-	csvwriter = csv.DictWriter(g, delimiter = ',', fieldnames = fieldnames)
-	csvwriter.writerow(dict((fn,fn) for fn in fieldnames))
-	for row in sample:
-		csvwriter.writerow(row)
+	"""This is the most common workflow:
+		- read sequences from the CSV file of all sequences.
+		- shuffle records to randomize their order.
+		- extract a subset of n samples
+		- write the subset to a 'sampled' CSV file."""
+	def start_standard_workflow(self, n):
+		self.fetch_sequences()
+		self.shuffle_records()
+		self.extract_subset(n)
+		self.write_subset()

@@ -20,56 +20,14 @@ class SequenceParser(object):
 		
 		self.fnh = filename_holder
 		
-# 		self.segment = segment
-# 		self.species = species
-# 		self.strain = strain
-# 		
-# 		self.filename_sequences = ''
-# 		self.filename_table_txt = ''
-# 		self.filename_table_csv = ''
-# 		self.filename_compiled = ''
-# 		self.filenames = self.set_filenames_list()
-		
 		self.seq_db = []
 		
 		self.data_db = []
 		
 		self.compiled_db = []
-		
-# 	"""Generate the filenames. These are merely strings."""	
-# 	def set_filenames(self):
-# 	
-# 		self.filename_sequences = 'Influenza A Human Strains %s Protein Sequences.gb' % self.segment
-# 		self.filename_table_txt = 'Influenza A Human Strains %s Protein Sequences.txt' % self.segment
-# 		self.filename_table_csv = 'Influenza A Human Strains %s Protein Sequences.csv' % self.segment
-# 		self.filename_compiled = 'Influenza A Human Strains %s Compiled Sequences.csv' % self.segment
-# 		
-# 		self.set_filenames_list()
-# 		
-# 	def set_filenames_list(self):
-# 		self.filenames = [self.filename_sequences, self.filename_table_txt, self.filename_table_csv, self.filename_compiled]
-# 	
-# 	"""Get the filename strings."""
-# 	def get_filename(self, type):
-# 	
-# 		if type == 'sequences':
-# 			return self.filename_sequences
-# 			
-# 		if type == 'table txt':
-# 			return self.filename_table_txt
-# 		
-# 		if type == 'table csv':
-# 			return self.filename_table_csv
-# 		
-# 		if type == 'compiled':
-# 			return self.filename_compiled
-# 		
-# 		elif type == 'all':
-# 			return self.filenames
-# 		
 
 	"""Get sequences from the genbank file."""
-	def get_sequences(self):
+	def fetch_sequences(self):
 	
 		sequences = open(self.fnh.get_fn_sequences(), 'rU')
 		
@@ -121,7 +79,8 @@ class SequenceParser(object):
 			state_province = row['State/Province']
 			season = row['Flu Season']
 			date_created = row['Creation Date']
-			id = str(accession) + "|" + str(strain_name)
+			id = "%s|%s" % (str(accession), str(strain_name))
+			id_long = "%s | %s | %s" % (str(subtype), str(accession), str(strain_name))
 
 			data['accession'] = accession
 			data['strain_name'] = strain_name
@@ -131,6 +90,7 @@ class SequenceParser(object):
 			data['flu_season'] = season
 			data['creation_date'] = date_created
 			data['id'] = id
+			data['id_long'] = id_long
 	
 			self.data_db.append(data)
 		
@@ -158,15 +118,21 @@ class SequenceParser(object):
 					compiled['flu_season'] = data['flu_season']
 					compiled['creation_date'] = data['creation_date']
 					compiled['sequence'] = sequence['sequence']
+					compiled['id_long'] = data['id_long']
 					
 					self.compiled_db.append(compiled)
 	
+	def get_compiled_db(self):
+		return self.compiled_db
+	
 	"""Write compiled data as a CSV file."""				
 	def write_compiled_table(self):
-		fieldnames = ['id', 'subtype', 'accession', 'sequence', 'strain_name', 'country', 'state_province', 'flu_season', 'creation_date']
+	
+		fieldnames = ['id', 'id_long', 'subtype', 'accession', 'sequence', 'strain_name', 'country', 'state_province', 'flu_season', 'creation_date']
 		out_file = open(self.fnh.get_fn_compiled(), 'w+')
 		dictwriter = csv.DictWriter(out_file, delimiter = ',', fieldnames = fieldnames)
 		dictwriter.writerow(dict((fn, fn) for fn in fieldnames))
+		
 		for row in self.compiled_db:
 			dictwriter.writerow(row)
 		out_file.close()
@@ -174,10 +140,10 @@ class SequenceParser(object):
 	"""This is the standard workflow up till the sampling of sequences."""
 	def start_standard_workflow(self):
 # 		self.set_filenames()
-		self.get_sequences()
-		self.print_seq_db()
+		self.fetch_sequences()
+# 		self.print_seq_db()
 		self.convert_data_table()
 		self.get_data_table()
-		self.print_data_db()
+# 		self.print_data_db()
 		self.compare_data_table()
 		self.write_compiled_table()
