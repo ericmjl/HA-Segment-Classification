@@ -78,7 +78,7 @@ class SequenceParser(object):
 			country = row['Country']
 			state_province = row['State/Province']
 			season = row['Flu Season']
-			date_created = row['Creation Date']
+# 			date_created = row['Creation Date']
 			id = "%s|%s" % (str(accession), str(strain_name))
 			id_long = "%s | %s | %s" % (str(subtype), str(accession), str(strain_name))
 
@@ -88,7 +88,7 @@ class SequenceParser(object):
 			data['country'] = country
 			data['state_province'] = state_province
 			data['flu_season'] = season
-			data['creation_date'] = date_created
+# 			data['creation_date'] = date_created
 			data['id'] = id
 			data['id_long'] = id_long
 	
@@ -116,7 +116,7 @@ class SequenceParser(object):
 					compiled['country'] = data['country']
 					compiled['state_province'] = data['state_province']
 					compiled['flu_season'] = data['flu_season']
-					compiled['creation_date'] = data['creation_date']
+# 					compiled['creation_date'] = data['creation_date']
 					compiled['sequence'] = sequence['sequence']
 					compiled['id_long'] = data['id_long']
 					
@@ -128,7 +128,7 @@ class SequenceParser(object):
 	"""Write compiled data as a CSV file."""				
 	def write_compiled_table(self):
 	
-		fieldnames = ['id', 'id_long', 'subtype', 'accession', 'sequence', 'strain_name', 'country', 'state_province', 'flu_season', 'creation_date']
+		fieldnames = ['id', 'id_long', 'subtype', 'accession', 'sequence', 'strain_name', 'country', 'state_province', 'flu_season']
 		out_file = open(self.fnh.get_fn_compiled(), 'w+')
 		dictwriter = csv.DictWriter(out_file, delimiter = ',', fieldnames = fieldnames)
 		dictwriter.writerow(dict((fn, fn) for fn in fieldnames))

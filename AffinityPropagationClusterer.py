@@ -81,7 +81,6 @@ class AffinityPropagationClusterer(object):
 		self.distmat_stdev = np.std(self.get_sanDistmatArray())
 		
 		self.affmat = np.array([eulers ** (-row/self.distmat_stdev) for row in self.sanDistmatArray]).astype(np.float)
-# 		print self.affmat
 		self.set_fullaffmat()
 	
 	"""This method returns the affinity matrix array."""
@@ -103,19 +102,12 @@ class AffinityPropagationClusterer(object):
 	The affinity matrix, for computing purposes, is an array. This is not necessary for the full affinity matrix, as all we need is it tob e a list. Hence, in this method, we convert each row in the affmat into a list, add sanitized distmat IDs into the first position on each row, and append each row to the full list."""
 	def set_fullaffmat(self):
 		self.full_affmat = []
-# 		print self.full_affmat
 		
 		for n, row in enumerate(self.get_affmat(), 0):
 			listrow = list(row)
 			listrow.insert(0, self.get_sanDistmatIDs()[n])
 			self.full_affmat.append(listrow)
-# 		self.full_affmat = zip(self.get_sanDistmatIDs(), self.get_affmat())
-		
-# 		for row in self.full_affmat:
-# 			print row
-		
-# 		print self.full_affmat
-		
+
 	def get_fullaffmat(self):
 		return self.full_affmat
 	
@@ -191,65 +183,3 @@ class AffinityPropagationClusterer(object):
 		pl.title('Protein: %s' % self.fnh.get_segment())
 		pl.suptitle('Estimated number of clusters: %d' % self.n_clusters)
 		pl.show()
-		
-	
-
-# ##############################################################################
-# # Compute Affinity Propagation
-# af = AffinityPropagation(affinity='precomputed').fit(self.affmat)
-# cluster_centers_indices = af.cluster_centers_indices_
-# labels = af.labels_
-# 
-# # print labels
-# 
-# n_clusters_ = len(cluster_centers_indices)
-# 
-# from collections import defaultdict
-# clusternames = defaultdict(list)
-# 
-# for i, label in enumerate(labels):
-# 	clusternames[label].append(sequence_names[i])
-# 	
-# print "Clusters:"
-# #Write clusters to a text file for storage.
-# with open('%s-sequence-clusters.txt' % segment, 'w+') as f:
-# 	for k, v in clusternames.items():
-# 		f.write(str(k))
-# 		f.write('\n')
-# 		f.write(str(v))
-# 		f.write('\n')
-# 		print k, v
-# 
-# print 'Estimated number of clusters: %d' % n_clusters_
-# print "Homogeneity: %0.3f" % metrics.homogeneity_score(sequence_names, labels)
-# print "Completeness: %0.3f" % metrics.completeness_score(sequence_names, labels)
-# print "V-measure: %0.3f" % metrics.v_measure_score(sequence_names, labels)
-# print "Adjusted Rand Index: %0.3f" % \
-#     metrics.adjusted_rand_score(sequence_names, labels)
-# print("Adjusted Mutual Information: %0.3f" %
-#       metrics.adjusted_mutual_info_score(sequence_names, labels))
-# print("Silhouette Coefficient: %0.3f" %
-#       metrics.silhouette_score(self.affmat, labels, metric='sqeuclidean'))
-# 
-# ##############################################################################
-# # Plot result
-# import pylab as pl
-# from itertools import cycle
-# 
-# pl.close('all')
-# pl.figure(1)
-# pl.clf()
-# 
-# colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
-# for k, col in zip(range(n_clusters_), colors):
-#     class_members = labels == k
-#     cluster_center = self.affmat[cluster_centers_indices[k]]
-#     pl.plot(self.affmat[class_members, 0], self.affmat[class_members, 1], col + '.')
-#     pl.plot(cluster_center[0], cluster_center[1], 'o', markerfacecolor=col,
-#             markeredgecolor='k', markersize=10)
-#     for x in self.affmat[class_members]:
-#         pl.plot([cluster_center[0], x[0]], [cluster_center[1], x[1]], col)
-# 
-# pl.title('Protein: %s' % segment)
-# pl.suptitle('Estimated number of clusters: %d' % n_clusters_)
-# pl.show()

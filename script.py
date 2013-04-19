@@ -3,7 +3,7 @@ from FilenameHolder import *
 from SequenceSampler import *
 from SequenceAligner import *
 from AffinityPropagationClusterer import *
-segment = 'NA'
+segment = 'HA'
 species = 'Human'
 strain = 'A'
 
