@@ -80,7 +80,7 @@ class SequenceParser(object):
 			season = row['Flu Season']
 # 			date_created = row['Creation Date']
 			id = "%s|%s" % (str(accession), str(strain_name))
-			id_long = "%s | %s | %s" % (str(subtype), str(accession), str(strain_name))
+			id_long = "%s|%s|%s" % (str(subtype), str(accession), str(strain_name))
 
 			data['accession'] = accession
 			data['strain_name'] = strain_name

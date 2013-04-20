@@ -74,11 +74,13 @@ class AffinityPropagationClusterer(object):
 		
 		return self.sanDistmatIDs
 	
-	"""This method computes the affinity matrix by applying a "kernel". Still don't know what a kernel is, but I know its form."""
+	"""This method computes the affinity matrix by applying a "kernel". Still don't know what a kernel is, but I know its form:
+		- affinity = eulers ^ (-distance/distance_stdev)"""
 	def compute_affmat(self):
 	
 		eulers = math.exp(1)
 		self.distmat_stdev = np.std(self.get_sanDistmatArray())
+		print self.distmat_stdev
 		
 		self.affmat = np.array([eulers ** (-row/self.distmat_stdev) for row in self.sanDistmatArray]).astype(np.float)
 		self.set_fullaffmat()
@@ -99,7 +101,9 @@ class AffinityPropagationClusterer(object):
 	
 	"""Get and set the full affinity matrix.
 	
-	The affinity matrix, for computing purposes, is an array. This is not necessary for the full affinity matrix, as all we need is it tob e a list. Hence, in this method, we convert each row in the affmat into a list, add sanitized distmat IDs into the first position on each row, and append each row to the full list."""
+	The affinity matrix, for computing purposes, is an array. This is not necessary for the full affinity matrix, as all we need is it to be a list. Hence, in this method, we convert each row in the affmat into a list, add sanitized distmat IDs into the first position on each row, and append each row to the full list.
+	
+	The purpose of having the full affinity matrix is to write it to a CSV file for viewing. Nothing else."""
 	def set_fullaffmat(self):
 		self.full_affmat = []
 		
@@ -114,6 +118,27 @@ class AffinityPropagationClusterer(object):
 	"""Get the distance matrix standard deviation. Meant for interest."""
 	def get_distmat_stdev(self):
 		return self.distmat_stdev
+	
+	"""Get and set distance matrix average distance. Meant for interest."""
+	def get_distmat_average(self):
+		return self.distmat_avg
+		
+	def compute_distmat_average(self):
+		self.distmat_avg = np.average(self.get_sanDistmatArray()).astype(float)
+		
+	"""Get and set affinity matrix standard deviation. Meant for interest."""
+	def compute_affmat_stdev(self):
+		self.affmat_stdev = np.std(self.affmat)
+		
+	def get_affmat_stdev(self):
+		return self.affmat_stdev
+		
+	"""Get and set affinity matrix average. Meant for interest."""
+	def compute_affmat_average(self):
+		self.affmat_avg = np.average(self.get_affmat()).astype(float)
+		
+	def get_affmat_average(self):
+		return self.affmat_avg
 		
 	"""Compute affinity propagation."""
 	def compute_affinity_propagation(self):
@@ -133,6 +158,17 @@ class AffinityPropagationClusterer(object):
 	def write_txt_report(self):
 		out_file = open(self.fnh.get_fn_report(), 'w+')
 		
+		out_file.write('Distance Matrix Statistics: \n')
+		self.compute_distmat_average()
+		out_file.write('Average Distance: %d \n' % self.get_distmat_average())
+		out_file.write('Distance Stdev: %d \n\n' % self.get_distmat_stdev())
+		
+		out_file.write('Affinity Matrix Statistics: \n')
+		self.compute_affmat_average()
+		out_file.write('Average Affinity: %d \n' % self.get_affmat_average())
+		self.compute_affmat_stdev()
+		out_file.write('Affinity Stdev: %d \n\n' % self.get_affmat_stdev())
+		
 		for k, v in self.clusternames.items():
 			print ("Cluster %s:" % str(k + 1))
 			print ('\n')
@@ -142,7 +178,7 @@ class AffinityPropagationClusterer(object):
 			out_file.write("Cluster %s:" % str(k + 1))
 			out_file.write('\n')
 			out_file.write(str(v))
-			out_file.write('\n')
+			out_file.write('\n\n')
 			
 		out_file.write('Estimated number of clusters: %d' % self.n_clusters)
 		out_file.write(newline)
@@ -182,4 +218,15 @@ class AffinityPropagationClusterer(object):
 
 		pl.title('Protein: %s' % self.fnh.get_segment())
 		pl.suptitle('Estimated number of clusters: %d' % self.n_clusters)
-		pl.show()
+		pl.savefig(self.fnh.get_fn_fig())
+	
+	def start_standard_workflow(self):
+		self.fetch_distmat()
+		self.sanitize_distmat()
+		self.write_sanDistmat()
+		self.compute_affmat()
+		self.write_affmat()
+		self.get_distmat_stdev()
+		self.compute_affinity_propagation()
+		self.write_txt_report()
+		self.plot_clusters()

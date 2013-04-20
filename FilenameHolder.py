@@ -104,6 +104,13 @@ class FilenameHolder(object):
 	def get_fn_report(self):
 		return self.fn_report
 		
+	"""Get and set fn_fig."""
+	def set_fn_fig(self):
+		self.fn_fig = 'Influenza %s %s Strains %s Clustering Report.png' % self.parameters
+		
+	def get_fn_fig(self):
+		return self.fn_fig
+		
 	def name_all_files(self):
 		self.set_fn_sequences()
 		self.set_fn_table_txt()
@@ -116,3 +123,4 @@ class FilenameHolder(object):
 		self.set_fn_sanDistmat()
 		self.set_fn_affmat()
 		self.set_fn_report()
+		self.set_fn_fig()

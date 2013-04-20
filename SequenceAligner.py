@@ -36,7 +36,7 @@ class SequenceAligner(object):
 		
 		for row in self.sequences:
 			sequence = Seq(row['sequence'], generic_protein)
-			id = row['id']
+			id = row['id_long']
 			name = row['strain_name']
 			description = row['subtype']
 			
